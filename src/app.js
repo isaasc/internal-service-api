@@ -1,3 +1,5 @@
+require('./models/Department');
+require('./models/Person');
 const express = require('express');
 const app = express();
 
