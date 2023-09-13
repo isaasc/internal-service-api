@@ -2,8 +2,14 @@ const departmentRepository = require('../repositories/departmentRepository');
 const ValidationContract = require('../util/validators');
 
 exports.createDepartment = async (req, res) => {
-  //   let validators = new ValidationContract();
-  //   validators.isRequired(req.body.ticket, 'Ticket is required');
+  let validators = new ValidationContract();
+  validators.isRequired(req.body.departmentCode, 'departmentCode is required');
+  validators.isRequired(req.body.name, 'name is required');
+  validators.isRequired(req.body.idSector, 'idSector is required');
+  validators.isObjectIdValid(
+    req.body.idSector,
+    `idSector: "${req.body.idSector}" is not a ObjectId valid.`,
+  );
 
   try {
     if (validators.isValid()) {
@@ -23,9 +29,9 @@ exports.createDepartment = async (req, res) => {
 
 exports.findAllDepartments = async (req, res) => {
   try {
-    const departments = await DepartmentRepository.findAllDepartments();
+    const departments = await departmentRepository.findAllDepartments();
     if (departments == null || departments.length == 0) {
-      res.status(204).send('No Departments found');
+      res.status(204).send();
     } else {
       res.status(200).send(departments);
     }
@@ -37,27 +43,83 @@ exports.findAllDepartments = async (req, res) => {
 };
 
 exports.findDepartmentById = async (req, res) => {
+  let validators = new ValidationContract();
   const departmentId = req.params.id;
-  if (departmentId == null) {
-    res.status(400).send('departmentId is required');
-  }
-  const department = departmentRepository.findDepartmentById(departmentId);
+  validators.isRequired(departmentId, 'departmentId is required');
+  validators.isObjectIdValid(
+    departmentId,
+    `departmentId: "${departmentId}" is not a ObjectId valid.`,
+  );
 
-  if (!department) {
-    res.status(404).send();
+  try {
+    if (validators.isValid()) {
+      const department = await departmentRepository.findDepartmentById(
+        departmentId,
+      );
+      if (!department) {
+        res.status(204).send();
+        return;
+      }
+      res.status(200).send(department);
+    } else {
+      res.status(400).send({
+        errors: validators.getErrors(),
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: 'Server error.',
+    });
   }
-
-  res.status(200).send(department);
 };
 
 exports.updateDepartmentById = async (req, res) => {
+  let validators = new ValidationContract();
   const departmentId = req.params.id;
-  await departmentRepository.updateDepartmentById(departmentId, req.body);
-  res.status(200).send('Department updated', req.body);
+  validators.isRequired(departmentId, 'departmentId is required');
+  validators.isObjectIdValid(
+    departmentId,
+    `departmentId: "${departmentId}" is not a ObjectId valid.`,
+  );
+
+  try {
+    if (validators.isValid()) {
+      await departmentRepository.updateDepartmentById(departmentId, req.body);
+      res.status(200).send('Department updated');
+    } else {
+      res.status(400).send({
+        errors: validators.getErrors(),
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: 'Server error.',
+    });
+  }
 };
 
 exports.deleteDepartmentById = async (req, res) => {
+  let validators = new ValidationContract();
   const departmentId = req.params.id;
-  await departmentRepository.deleteAttendanceRecordById(departmentId);
-  res.status(204).send('Department deleted', req.body);
+  validators.isRequired(departmentId, 'departmentId is required');
+  validators.isObjectIdValid(
+    departmentId,
+    `departmentId: "${departmentId}" is not a ObjectId valid.`,
+  );
+
+  try {
+    if (validators.isValid()) {
+      await departmentRepository.deleteDepartmentById(departmentId);
+      res.status(204).send();
+    } else {
+      res.status(400).send({
+        errors: validators.getErrors(),
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: 'Server error.',
+    });
+  }
 };
