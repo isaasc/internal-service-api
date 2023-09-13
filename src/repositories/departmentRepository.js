@@ -13,7 +13,7 @@ exports.findAllDepartments = async () => {
 };
 
 exports.findDepartmentById = async (departmentId) => {
-  const department = await Department.findByOne({ _id: departmentId });
+  const department = await Department.findOne({ _id: departmentId });
   return department;
 };
 
@@ -26,7 +26,7 @@ exports.updateDepartmentById = async (departmentId, department) => {
     $set: {
       departmentCode: department.departmentCode,
       name: department.name,
-      sector: department.sector,
+      idSector: department.idSector,
     },
   });
 };
