@@ -7,7 +7,7 @@ const schemaPerson = new Schema({
     required: [true, 'name is required'],
   },
   cpf: {
-    type: String,
+    type: Number,
     required: [true, 'cpf is required'],
   },
   address: {
@@ -15,7 +15,7 @@ const schemaPerson = new Schema({
     required: [true, 'address is required'],
   },
   telephone: {
-    type: String,
+    type: Number,
   },
 });
 

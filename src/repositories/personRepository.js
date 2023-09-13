@@ -1,5 +1,4 @@
-const { default: mongoose } = require('mongoose');
-
+const mongoose = require('mongoose');
 const Person = mongoose.model('Person');
 
 exports.createPerson = async (person) => {
@@ -13,7 +12,7 @@ exports.findAllPersons = async () => {
 };
 
 exports.findPersonById = async (personId) => {
-  const person = await Person.findByOne({ _id: personId });
+  const person = await Person.findOne({ _id: personId });
   return person;
 };
 
